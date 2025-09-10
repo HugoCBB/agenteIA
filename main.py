@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Diferenca mensagem de sistema de usuario
 from langchain_core.messages import SystemMessage, HumanMessage
@@ -30,12 +30,32 @@ TRIAGEM_PROMPT = (
 class TriagemOut(BaseModel):
     decisao: Literal["AUTO_RESOLVER" , "PEDIR_INFO", "ABRIR_CHAMADO"]
     urgencia: Literal["BAIXA", "MEDIA", "ALTA"]
-    campos_faltantes: List[str] = Field(default_factory=List)
+    campos_faltantes: List[str] = Field(default_factory=list)
 
 
-llm_triagem = GoogleGenerativeAI(
+llm_triagem = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     temperature=1.0,
     api_key=GOOGLE_API_KEY
 )
 
+triagem_chain = llm_triagem.with_structured_output(TriagemOut)
+
+def triagem(mensagem: str) -> Dict:
+    saida: TriagemOut = triagem_chain.invoke([
+
+        SystemMessage(content=TRIAGEM_PROMPT),
+        HumanMessage(content=mensagem)
+    ])
+    return saida.model_dump()
+
+
+testes = [
+    "Posso reembolsar a internet?",
+    "Posso reembolsar, cursos e treinamentos da alura",
+    "Quantos graos de areia tem na praia de Salvador?",
+    "Quero tirar as minhas ferias, e necessito de uma posicao urgente",
+]
+    
+for msg in testes:
+    print(f"Pergunta: {msg}\n-> Resposta: {triagem(msg)}")
