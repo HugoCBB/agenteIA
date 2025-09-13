@@ -50,12 +50,13 @@ def triagem(mensagem: str) -> Dict:
     return saida.model_dump()
 
 
-testes = [
-    "Posso reembolsar a internet?",
-    "Posso reembolsar, cursos e treinamentos da alura",
-    "Quantos graos de areia tem na praia de Salvador?",
-    "Quero tirar as minhas ferias, e necessito de uma posicao urgente",
-]
-    
-for msg in testes:
-    print(f"Pergunta: {msg}\n-> Resposta: {triagem(msg)}")
+if __name__ == "__main__":
+    testes = [
+        "Posso reembolsar a internet?",
+        "Posso reembolsar, cursos e treinamentos da alura",
+        "Quantos graos de areia tem na praia de Salvador?",
+        "Quero tirar as minhas ferias, e necessito de uma posicao urgente",
+    ]
+        
+    for msg in testes:
+        print(f"Pergunta: {msg}\n-> Resposta: {triagem(msg)}")

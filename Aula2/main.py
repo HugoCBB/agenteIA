@@ -28,7 +28,7 @@ llm = ChatGoogleGenerativeAI(
 docs  = []
 
 def extract_document():
-    for document in Path("../data/pdf/").glob("*.pdf"):
+    for document in Path("data/pdf/").glob("*.pdf"):
         try:
             loader = PyMuPDFLoader(str(document))
             docs.extend(loader.load())
@@ -46,10 +46,6 @@ extract_document()
 splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=30)
 
 chuncks = splitter.split_documents(docs)
-
-for chunck in chuncks:
-    print(chunck, "\n")
-
 
 embeddings = GoogleGenerativeAIEmbeddings(
     model="models/gemini-embedding-001",
@@ -128,13 +124,14 @@ testes = ["Posso reembolsar a internet?",
           "Posso reembolsar cursos ou treinamentos da Alura?",
           "Quantas capivaras tem no Rio Pinheiros?"]
 
-for msg_teste in testes:
-    resposta = politicas_rag(msg_teste)
-    print(f"PERGUNTA: {msg_teste}")
-    print(f"RESPOSTA: {resposta['answer']}")
-    if resposta['contexto_encontrado']:
-        print("CITAÇÕES:")
-        for c in resposta['citacoes']:
-            print(f" - Documento: {c['documento']}, Página: {c['pagina']}")
-            print(f"   Trecho: {c['trecho']}")
-        print("------------------------------------")
+if __name__ == "__main__":
+    for msg_teste in testes:
+        resposta = politicas_rag(msg_teste)
+        print(f"PERGUNTA: {msg_teste}")
+        print(f"RESPOSTA: {resposta['answer']}")
+        if resposta['contexto_encontrado']:
+            print("CITAÇÕES:")
+            for c in resposta['citacoes']:
+                print(f" - Documento: {c['documento']}, Página: {c['pagina']}")
+                print(f"   Trecho: {c['trecho']}")
+            print("------------------------------------")
